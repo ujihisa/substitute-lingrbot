@@ -33,7 +33,7 @@
               (clojure.string/replace @latest-text
                                       (re-pattern left)
                                       right)]
-          (dosync (ref-set latest-text new-text))
+          (dosync (ref-set latest-text text))
           (format "%s" new-text)))
       (do
         (swap! previous-text assoc nick text)
