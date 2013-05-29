@@ -18,15 +18,17 @@
 (defn handle-post [body]
   (for [message (map :message (:events (read-json (slurp body))))
         :let [text (:text message)
-              room (:room message)]]
-    (if-let [[_ left right _ nick]
+              nick (:nickname message)]]
+    (if-let [[_ left right _ target-nick]
              (re-find #"^s/([^/]+)/([^/]+)/g?\s*(<\s*@?(.*))?$" text)]
       (let [new-text
-            (clojure.string/replace (get @previous-text room "") (re-pattern left) right)]
-        (swap! previous-text assoc room new-text)
-        (format "%s (to: %s)" new-text nick))
+            (clojure.string/replace (get @previous-text target-nick "")
+                                    (re-pattern left)
+                                    right)]
+        (swap! previous-text assoc target-nick new-text)
+        (format "%s" new-text))
       (do
-        (swap! previous-text assoc room text)
+        (swap! previous-text assoc nick text)
         ""))))
 
 (defroutes routes
