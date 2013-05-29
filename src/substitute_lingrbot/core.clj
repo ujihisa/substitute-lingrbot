@@ -15,6 +15,19 @@
 
 (def previous-text (atom {}))
 
+(defn handle-post [body]
+  (for [message (map :message (:events (read-json (slurp body))))
+        :let [text (:text message)
+              room (:room message)]]
+    (if-let [[_ left right] (re-find #"^s/([^/]+)/([^/]+)/g?$" text)]
+      (let [new-text
+            (clojure.string/replace (get @previous-text room) (re-pattern left) right)]
+        (swap! previous-text assoc room new-text)
+        new-text)
+      (do
+        (swap! previous-text assoc room text)
+        ""))))
+
 (defroutes routes
   (GET "/" []
        (str {:version version
@@ -22,20 +35,8 @@
              :from start-time
              :author "ujihisa"
              :previous-text @previous-text}))
-  (POST "/" {body :body headers :headers}
-        (let [results
-              (for [message (map :message (:events (read-json (slurp body))))
-                    :let [text (:text message)
-                          room (:room message)]]
-                (if-let [[_ left right] (re-find #"^s/([^/]+)/([^/]+)/g?$" text)]
-                  (let [new-text
-                        (clojure.string/replace (get @previous-text room) (re-pattern left) right)]
-                    (swap! previous-text assoc room new-text)
-                    new-text)
-                  (do
-                    (swap! previous-text assoc room text)
-                    "")))]
-          (clojure.string/join "\n" results))))
+  (POST "/" {body :body}
+        (clojure.string/join "\n" results (handle-post body))))
 
 (defn -main []
   (let [port (Integer/parseInt (or (System/getenv "PORT") "8080"))]
