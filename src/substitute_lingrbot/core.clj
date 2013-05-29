@@ -36,7 +36,7 @@
              :author "ujihisa"
              :previous-text @previous-text}))
   (POST "/" {body :body}
-        (clojure.string/join "\n" results (handle-post body))))
+        (clojure.string/join "\n" (handle-post body))))
 
 (defn -main []
   (let [port (Integer/parseInt (or (System/getenv "PORT") "8080"))]
