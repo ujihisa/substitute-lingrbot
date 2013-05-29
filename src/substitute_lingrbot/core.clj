@@ -40,7 +40,7 @@
        (NOT IMPLEMENTED) it looks up older messages if regexp didn't match
        http://substitute-lingrbot.herokuapp.com/"
       (if-let [[_ left right _ target-nick]
-               (re-find #"^s/((?:\\.|[^/])+)/((?:\\.|[^/])+)/g?\s*(<\s*@?(.*))?$" text)]
+               (re-find #"^s/((?:\\.|[^/])+)/((?:\\.|[^/])*)/g?\s*(<\s*@?(.*))?$" text)]
         (if target-nick
           (let [new-text
                 (replace (get @previous-text target-nick "")
