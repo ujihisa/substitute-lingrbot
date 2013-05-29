@@ -33,11 +33,11 @@
               (clojure.string/replace @latest-text
                                       (re-pattern left)
                                       right)]
-          (dosync (ref-set latest-text text))
+          (dosync (ref-set latest-text new-text))
           (format "%s" new-text)))
       (do
         (swap! previous-text assoc nick text)
-        (dosync (ref-set latest-text new-text))
+        (dosync (ref-set latest-text text))
         ""))))
 
 (defroutes routes
