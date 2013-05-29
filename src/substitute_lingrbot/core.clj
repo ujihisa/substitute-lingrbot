@@ -20,7 +20,7 @@
   (for [message (map :message (:events (read-json (slurp body))))
         :let [text (:text message)
               nick (:nickname message)]]
-    (if (re-find "^!help$")
+    (if (re-find #"^!help$" text)
       "s/regexp/text/
          replaces the latest previous message.
        s/regexp/text/ < nickname
@@ -32,7 +32,7 @@
          replaces the latest previous message by yourself.
          NOT IMPLMENENTED YET
        (NOT IMPLEMENTED) it looks up older messages if regexp didn't match
-      "
+      http://substitute-lingrbot.herokuapp.com/"
       (if-let [[_ left right _ target-nick]
                (re-find #"^s/([^/]+)/([^/]+)/g?\s*(<\s*@?(.*))?$" text)]
         (if target-nick
