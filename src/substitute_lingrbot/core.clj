@@ -16,7 +16,7 @@
   (java.util.Date.))
 
 (def previous-text (atom {}))
-(def latest-text (ref ""))
+(def latest-texts (atom [""]))
 
 (defn handle-post [body]
   (for [message (map :message (:events (read-json (slurp body))))
@@ -48,15 +48,16 @@
                                         (replace right #"\\(.)" "$1"))]
             (swap! previous-text assoc target-nick new-text)
             (format "%s" new-text))
-          (let [new-text
-                (replace @latest-text
+          (let [latest-text (last @latest-texts) ; TODO
+                new-text
+                (replace latest-text
                                         (re-pattern (replace left #"\\(.)" "$1"))
                                         (replace right #"\\(.)" "$1"))]
-            (dosync (ref-set latest-text new-text))
+            (swap! latest-texts conj new-text)
             (format "%s" new-text)))
         (do
           (swap! previous-text assoc nick text)
-          (dosync (ref-set latest-text text))
+          (swap! latest-texts conj text)
           "")))))
 
 (defroutes routes
