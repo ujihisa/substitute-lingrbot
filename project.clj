@@ -6,4 +6,4 @@
                  [org.clojure/data.json "0.1.2"]
                  [compojure "1.0.0-RC2"]
                  [ring "1.0.1"]]
-  :main clojure-lingrbot.core)
+  :main substitute-lingrbot.core)
