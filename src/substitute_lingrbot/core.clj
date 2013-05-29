@@ -49,9 +49,9 @@
             (swap! previous-text assoc target-nick new-text)
             (format "%s" new-text))
           (let [new-text
-                (clojure.string/replace @latest-text
-                                        (re-pattern (clojure.string/replace left #"\\(.)" "$1"))
-                                        (clojure.string/replace right #"\\(.)" "$1"))]
+                (replace @latest-text
+                                        (re-pattern (replace left #"\\(.)" "$1"))
+                                        (replace right #"\\(.)" "$1"))]
             (dosync (ref-set latest-text new-text))
             (format "%s" new-text)))
         (do
