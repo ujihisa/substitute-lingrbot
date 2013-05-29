@@ -20,25 +20,38 @@
   (for [message (map :message (:events (read-json (slurp body))))
         :let [text (:text message)
               nick (:nickname message)]]
-    (if-let [[_ left right _ target-nick]
-             (re-find #"^s/([^/]+)/([^/]+)/g?\s*(<\s*@?(.*))?$" text)]
-      (if target-nick
-        (let [new-text
-              (clojure.string/replace (get @previous-text target-nick "")
-                                      (re-pattern left)
-                                      right)]
-          (swap! previous-text assoc target-nick new-text)
-          (format "%s" new-text))
-        (let [new-text
-              (clojure.string/replace @latest-text
-                                      (re-pattern left)
-                                      right)]
-          (dosync (ref-set latest-text new-text))
-          (format "%s" new-text)))
-      (do
-        (swap! previous-text assoc nick text)
-        (dosync (ref-set latest-text text))
-        ""))))
+    (if (re-find "^!help$")
+      "s/regexp/text/
+         replaces the latest previous message.
+       s/regexp/text/ < nickname
+         replaces the latest previous message by the nickname user.
+       s/regexp/text/ < @id
+         replaces the latest previous message by the id user.
+         NOT IMPLMENENTED YET
+       s/regexp/text/ < me
+         replaces the latest previous message by yourself.
+         NOT IMPLMENENTED YET
+       (NOT IMPLEMENTED) it looks up older messages if regexp didn't match
+      "
+      (if-let [[_ left right _ target-nick]
+               (re-find #"^s/([^/]+)/([^/]+)/g?\s*(<\s*@?(.*))?$" text)]
+        (if target-nick
+          (let [new-text
+                (clojure.string/replace (get @previous-text target-nick "")
+                                        (re-pattern left)
+                                        right)]
+            (swap! previous-text assoc target-nick new-text)
+            (format "%s" new-text))
+          (let [new-text
+                (clojure.string/replace @latest-text
+                                        (re-pattern left)
+                                        right)]
+            (dosync (ref-set latest-text new-text))
+            (format "%s" new-text)))
+        (do
+          (swap! previous-text assoc nick text)
+          (dosync (ref-set latest-text text))
+          "")))))
 
 (defroutes routes
   (GET "/" []
