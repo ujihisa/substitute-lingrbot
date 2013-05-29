@@ -20,14 +20,15 @@
        (str {:version version
              :homepage "https://github.com/ujihisa/substitute-lingrbot"
              :from start-time
-             :author "ujihisa"}))
+             :author "ujihisa"
+             :previous-text @previous-text}))
   (POST "/" {body :body headers :headers}
         (let [results
               (for [message (map :message (:events (read-json (slurp body))))
                     :let [text (:text message)
                           room (:room message)]]
-                (if (re-find #"^s/([^/]+)/([^/]+)/g?$" text)
-                  (format "OK %s" (get @previous-text room))
+                (if-let [[_ left right] (re-find #"^s/([^/]+)/([^/]+)/g?$" text)]
+                  (clojure.string/replace text (re-pattern left) right)
                   (do
                     (swap! previous-text assoc room text)
                     "")))]
