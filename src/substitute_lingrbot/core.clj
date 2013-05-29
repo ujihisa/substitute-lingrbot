@@ -14,7 +14,7 @@
   (java.util.Date.))
 
 (def previous-text (atom {}))
-(def latest-text (atom ""))
+(def latest-text (ref ""))
 
 (defn handle-post [body]
   (for [message (map :message (:events (read-json (slurp body))))
@@ -33,11 +33,11 @@
               (clojure.string/replace @latest-text
                                       (re-pattern left)
                                       right)]
-          (swap! latest-text new-text)
+          (dosync (ref-set latest-text new-text))
           (format "%s" new-text)))
       (do
         (swap! previous-text assoc nick text)
-        (swap! latest-text text)
+        (dosync (ref-set latest-text new-text))
         ""))))
 
 (defroutes routes
