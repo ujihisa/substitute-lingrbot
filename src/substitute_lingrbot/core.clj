@@ -19,7 +19,8 @@
   (for [message (map :message (:events (read-json (slurp body))))
         :let [text (:text message)
               room (:room message)]]
-    (if-let [[_ left right _ nick] (re-find #"^s/([^/]+)/([^/]+)/g?\s*(<\s*@?(.*))$" text)]
+    (if-let [[_ left right _ nick]
+             (re-find #"^s/([^/]+)/([^/]+)/g?\s*(<\s*@?(.*))/$" text)]
       (let [new-text
             (clojure.string/replace (get @previous-text room) (re-pattern left) right)]
         (swap! previous-text assoc room new-text)
