@@ -14,6 +14,7 @@
   (java.util.Date.))
 
 (def previous-text (atom {}))
+(def latest-text (atom ""))
 
 (defn handle-post [body]
   (for [message (map :message (:events (read-json (slurp body))))
@@ -21,14 +22,22 @@
               nick (:nickname message)]]
     (if-let [[_ left right _ target-nick]
              (re-find #"^s/([^/]+)/([^/]+)/g?\s*(<\s*@?(.*))?$" text)]
-      (let [new-text
-            (clojure.string/replace (get @previous-text target-nick "")
-                                    (re-pattern left)
-                                    right)]
-        (swap! previous-text assoc target-nick new-text)
-        (format "%s" new-text))
+      (if target-nick
+        (let [new-text
+              (clojure.string/replace (get @previous-text target-nick "")
+                                      (re-pattern left)
+                                      right)]
+          (swap! previous-text assoc target-nick new-text)
+          (format "%s" new-text))
+        (let [new-text
+              (clojure.string/replace @latest-text
+                                      (re-pattern left)
+                                      right)]
+          (swap! latest-text new-text)
+          (format "%s" new-text)))
       (do
         (swap! previous-text assoc nick text)
+        (swap! latest-text text)
         ""))))
 
 (defroutes routes
