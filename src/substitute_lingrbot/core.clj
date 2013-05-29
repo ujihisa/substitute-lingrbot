@@ -26,7 +26,7 @@
               (for [message (map :message (:events (read-json (slurp body))))
                     :let [text (:text message)
                           room (:room message)]]
-                (if (re-find #"^s/([^/]+)/([^/]+)/g?$" message)
+                (if (re-find #"^s/([^/]+)/([^/]+)/g?$" text)
                   (format "OK %s" (get @previous-text room))
                   (do
                     (swap! previous-text assoc room text)
