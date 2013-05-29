@@ -25,7 +25,7 @@
     (if (re-find #"^!help$" text)
       "* s/regexp/text/
        replaces the latest previous message.
-       s/regexp/text/ < nickname
+       * s/regexp/text/ < nickname
        replaces the latest previous message by the nickname user.
        * s/regexp/text/ < @id
        replaces the latest previous message by the id user.
