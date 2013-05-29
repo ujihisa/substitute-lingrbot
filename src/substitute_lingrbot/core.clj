@@ -1,8 +1,10 @@
 (ns substitute-lingrbot.core
   #_(:require [leiningen.core.project])
+  (:refer-clojure :exclude [replace])
   (:use [compojure.core :only (defroutes GET POST)]
         [clojure.data.json :only (read-json)]
-        [ring.adapter.jetty :only (run-jetty)])
+        [ring.adapter.jetty :only (run-jetty)]
+        [clojure.string :only (replace join)])
   (:import java.util.concurrent.ExecutionException)
   (:gen-class))
 
@@ -41,9 +43,9 @@
                (re-find #"^s/((?:\\.|[^/])+)/((?:\\.|[^/])+)/g?\s*(<\s*@?(.*))?$" text)]
         (if target-nick
           (let [new-text
-                (clojure.string/replace (get @previous-text target-nick "")
-                                        (re-pattern (clojure.string/replace left #"\\(.)" "$1"))
-                                        (clojure.string/replace right #"\\(.)" "$1"))]
+                (replace (get @previous-text target-nick "")
+                                        (re-pattern (replace left #"\\(.)" "$1"))
+                                        (replace right #"\\(.)" "$1"))]
             (swap! previous-text assoc target-nick new-text)
             (format "%s" new-text))
           (let [new-text
@@ -65,7 +67,7 @@
              :author "ujihisa"
              :previous-text @previous-text}))
   (POST "/" {body :body}
-        (clojure.string/join "\n" (handle-post body))))
+        (join "\n" (handle-post body))))
 
 (defn -main []
   (let [port (Integer/parseInt (or (System/getenv "PORT") "8080"))]
