@@ -34,18 +34,18 @@
        (NOT IMPLEMENTED) it looks up older messages if regexp didn't match
       http://substitute-lingrbot.herokuapp.com/"
       (if-let [[_ left right _ target-nick]
-               (re-find #"^s/([^/]+)/([^/]+)/g?\s*(<\s*@?(.*))?$" text)]
+               (re-find #"^s/((?:\\.|[^/])+)/((?:\\.|[^/])+)/g?\s*(<\s*@?(.*))?$" text)]
         (if target-nick
           (let [new-text
                 (clojure.string/replace (get @previous-text target-nick "")
-                                        (re-pattern left)
-                                        right)]
+                                        (re-pattern (clojure.string/replace left #"\\(.)" "$1"))
+                                        (clojure.string/replace right #"\\(.)" "$1"))]
             (swap! previous-text assoc target-nick new-text)
             (format "%s" new-text))
           (let [new-text
                 (clojure.string/replace @latest-text
-                                        (re-pattern left)
-                                        right)]
+                                        (re-pattern (clojure.string/replace left #"\\(.)" "$1"))
+                                        (clojure.string/replace right #"\\(.)" "$1"))]
             (dosync (ref-set latest-text new-text))
             (format "%s" new-text)))
         (do
