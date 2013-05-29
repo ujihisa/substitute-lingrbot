@@ -22,17 +22,21 @@
               nick (:nickname message)]]
     (if (re-find #"^!help$" text)
       "s/regexp/text/
-         replaces the latest previous message.
+       replaces the latest previous message.
+
        s/regexp/text/ < nickname
-         replaces the latest previous message by the nickname user.
+       replaces the latest previous message by the nickname user.
+
        s/regexp/text/ < @id
-         replaces the latest previous message by the id user.
-         NOT IMPLMENENTED YET
+       replaces the latest previous message by the id user.
+       NOT IMPLMENENTED YET
+
        s/regexp/text/ < me
-         replaces the latest previous message by yourself.
-         NOT IMPLMENENTED YET
+       replaces the latest previous message by yourself.
+       NOT IMPLMENENTED YET
+
        (NOT IMPLEMENTED) it looks up older messages if regexp didn't match
-      http://substitute-lingrbot.herokuapp.com/"
+       http://substitute-lingrbot.herokuapp.com/"
       (if-let [[_ left right _ target-nick]
                (re-find #"^s/((?:\\.|[^/])+)/((?:\\.|[^/])+)/g?\s*(<\s*@?(.*))?$" text)]
         (if target-nick
