@@ -28,7 +28,7 @@
                     :let [text (:text message)
                           room (:room message)]]
                 (if-let [[_ left right] (re-find #"^s/([^/]+)/([^/]+)/g?$" text)]
-                  (clojure.string/replace text (re-pattern left) right)
+                  (clojure.string/replace (get @previous-text room) (re-pattern left) right)
                   (do
                     (swap! previous-text assoc room text)
                     "")))]
