@@ -13,7 +13,7 @@
 (def start-time
   (java.util.Date.))
 
-(def previous-message (atom {}))
+(def previous-text (atom {}))
 
 (defroutes routes
   (GET "/" []
@@ -27,8 +27,10 @@
                     :let [text (:text message)
                           room (:room message)]]
                 (if (re-find #"^s/([^/]+)/([^/]+)/g?$" message)
-                  (format "OK %s" (get @previous-message room))
-                  (swap! previous-message assoc room text)))]
+                  (format "OK %s" (get @previous-text room))
+                  (do
+                    (swap! previous-text assoc room text)
+                    "")))]
           (clojure.string/join "\n" results))))
 
 (defn -main []
