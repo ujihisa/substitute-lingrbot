@@ -12,9 +12,6 @@
   "dummy"
   #_(:version (leiningen.core.project/read)))
 
-(def start-time
-  (java.util.Date.))
-
 (def previous-text (atom {}))
 (def latest-texts (atom [""]))
 
@@ -57,10 +54,13 @@
           "")))))
 
 (defroutes routes
+  #_(def start-time
+    (java.util.Date.))
+
   (GET "/" []
        (str {:version version
              :homepage "https://github.com/ujihisa/substitute-lingrbot"
-             :from start-time
+             :from (java.util.Date.) #_start-time
              :author "ujihisa"
              :previous-text @previous-text}))
   (POST "/" {body :body}
