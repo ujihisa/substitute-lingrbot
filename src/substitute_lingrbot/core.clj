@@ -54,16 +54,13 @@
           "")))))
 
 (defroutes routes
-  #_(def start-time
-    (java.util.Date.))
-
   (let [start-time (java.util.Date.)]
     (GET "/" []
-       (str {:version version
-             :homepage "https://github.com/ujihisa/substitute-lingrbot"
-             :from start-time
-             :author "ujihisa"
-             :previous-text @previous-text})))
+         (str {:version version
+               :homepage "https://github.com/ujihisa/substitute-lingrbot"
+               :from start-time
+               :author "ujihisa"
+               :previous-text @previous-text})))
   (POST "/" {body :body}
         (join "\n" (handle-post body))))
 
