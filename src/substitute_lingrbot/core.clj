@@ -57,12 +57,13 @@
   #_(def start-time
     (java.util.Date.))
 
-  (GET "/" []
+  (let [start-time (java.util.Date.)]
+    (GET "/" []
        (str {:version version
              :homepage "https://github.com/ujihisa/substitute-lingrbot"
-             :from (java.util.Date.) #_start-time
+             :from start-time
              :author "ujihisa"
-             :previous-text @previous-text}))
+             :previous-text @previous-text})))
   (POST "/" {body :body}
         (join "\n" (handle-post body))))
 
