@@ -53,7 +53,7 @@
           (swap! latest-texts conj text)
           "")))))
 
-(defn my-save-eval [sexp]
+(defn my-safe-eval [sexp]
   (let [to-eval
         (binding [*ns* *ns*]
           (ns substitute-lingrbot.core
