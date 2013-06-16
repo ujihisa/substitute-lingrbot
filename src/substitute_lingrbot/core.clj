@@ -55,18 +55,15 @@
 
 (defn my-safe-eval [stri]
   (let [to-eval
-        `(do
-           (ns substitute-lingrbot.core)
-           (eval (read-string ~stri)))
-        #_(binding [*ns* *ns*]
+        `(binding [*ns* *ns*]
           (ns substitute-lingrbot.core
-            (:refer-clojure :exclude [replace])
-            (:use [compojure.core :only (defroutes GET POST)]
+            #_(:refer-clojure :exclude [replace])
+            #_(:use [compojure.core :only (defroutes GET POST)]
                   [clojure.data.json :only (read-json)]
                   [ring.adapter.jetty :only (run-jetty)]
                   [clojure.string :only (replace join)])
-            (:import java.util.concurrent.ExecutionException)
-            (:gen-class))
+            #_(:import java.util.concurrent.ExecutionException)
+            #_(:gen-class))
           (eval (read-string ~stri)))]
     (try (str (eval to-eval))
       (catch Exception e (str e)))))
