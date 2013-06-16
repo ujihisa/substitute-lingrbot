@@ -63,7 +63,7 @@
                :previous-text @previous-text})))
   (POST "/" {body :body}
         (join "\n" (handle-post body)))
-  (POST "/dev" {body :body}
+  (POST "/dev" {body :body headers :headers}
     (when (#{"64.46.24.16"} (headers "x-forwarded-for"))
       (let [body-parsed (try
                           (read-string (slurp body))
