@@ -53,6 +53,21 @@
           (swap! latest-texts conj text)
           "")))))
 
+(defn my-save-eval [sexp]
+  (let [to-eval
+        (binding [*ns* *ns*]
+          (ns substitute-lingrbot.core
+            (:refer-clojure :exclude [replace])
+            (:use [compojure.core :only (defroutes GET POST)]
+                  [clojure.data.json :only (read-json)]
+                  [ring.adapter.jetty :only (run-jetty)]
+                  [clojure.string :only (replace join)])
+            (:import java.util.concurrent.ExecutionException)
+            (:gen-class))
+          (eval sexp))]
+    (try (str (eval `to-eval))
+      (catch Exception e (str e)))))
+
 (defroutes routes
   (let [start-time (java.util.Date.)]
     (GET "/" []
@@ -68,8 +83,7 @@
       (let [body-parsed (try
                           (read-string (slurp body))
                           (catch RuntimeException e e))]
-        (try (str (eval (get body-parsed "code" nil)))
-          (catch Exception e (str e)))))))
+        (my-safe-eval (get body-parsed "code" nil))))))
 
 (defn -main []
   (let [port (Integer/parseInt (or (System/getenv "PORT") "8080"))]
