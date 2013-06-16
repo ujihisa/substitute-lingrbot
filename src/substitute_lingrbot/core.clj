@@ -1,7 +1,7 @@
 (ns substitute-lingrbot.core
   #_(:require [leiningen.core.project])
   #_(:refer-clojure :exclude [replace])
-  (:use [compojure.core :only (defroutes GET POST)]
+  (:use [compojure.core :only (defroutes GET POST ANY)]
         [clojure.data.json :only (read-json)]
         [ring.adapter.jetty :only (run-jetty)]
         [clojure.string :only (join)])
