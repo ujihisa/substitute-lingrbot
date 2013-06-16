@@ -64,7 +64,7 @@
                   [clojure.string :only (replace join)])
             (:import java.util.concurrent.ExecutionException)
             (:gen-class))
-          (eval ~sexp))]
+          (eval (read-string ~stri)))]
     (try (str (eval to-eval))
       (catch Exception e (str e)))))
 
