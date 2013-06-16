@@ -55,7 +55,7 @@
 
 (defn my-safe-eval [sexp]
   (let [to-eval
-        (binding [*ns* *ns*]
+        `(binding [*ns* *ns*]
           (ns substitute-lingrbot.core
             (:refer-clojure :exclude [replace])
             (:use [compojure.core :only (defroutes GET POST)]
@@ -65,7 +65,7 @@
             (:import java.util.concurrent.ExecutionException)
             (:gen-class))
           (eval sexp))]
-    (try (str (eval `to-eval))
+    (try (str (eval to-eval))
       (catch Exception e (str e)))))
 
 (defroutes routes
