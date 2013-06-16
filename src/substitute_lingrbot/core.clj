@@ -5,7 +5,7 @@
         [clojure.data.json :only (read-json)]
         [ring.adapter.jetty :only (run-jetty)]
         [clojure.string :only (join)])
-  (:require [clojure.string])
+  (:require [clojure.string :as s])
   (:import java.util.concurrent.ExecutionException)
   (:gen-class))
 
@@ -37,16 +37,16 @@
                (re-find #"^s/((?:\\.|[^/])+)/((?:\\.|[^/])*)/g?\s*(<\s*@?(.*))?$" text)]
         (if target-nick
           (let [new-text
-                (clojure.string/replace (get @previous-text target-nick "")
-                                        (re-pattern (clojure.string/replace left #"\\(.)" "$1"))
-                                        (clojure.string/replace right #"\\(.)" "$1"))]
+                (s/replace (get @previous-text target-nick "")
+                                        (re-pattern (s/replace left #"\\(.)" "$1"))
+                                        (s/replace right #"\\(.)" "$1"))]
             (swap! previous-text assoc target-nick new-text)
             (format "%s" new-text))
           (let [latest-text (last @latest-texts) ; TODO
                 new-text
-                (clojure.string/replace latest-text
-                                        (re-pattern (clojure.string/replace left #"\\(.)" "$1"))
-                                        (clojure.string/replace right #"\\(.)" "$1"))]
+                (s/replace latest-text
+                                        (re-pattern (s/replace left #"\\(.)" "$1"))
+                                        (s/replace right #"\\(.)" "$1"))]
             (swap! latest-texts conj new-text)
             (format "%s" new-text)))
         (do
