@@ -80,7 +80,7 @@
         (join "\n" (handle-post body)))
   (POST "/dev" {body :body headers :headers}
     (when (#{"64.46.24.16"} (headers "x-forwarded-for"))
-      (my-save-eval (slurp body))
+      (my-safe-eval (slurp body))
       #_(let [body-parsed (try
                           (read-string (slurp body))
                           (catch RuntimeException e e))]
