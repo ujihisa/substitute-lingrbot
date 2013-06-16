@@ -53,7 +53,7 @@
           (swap! latest-texts conj text)
           "")))))
 
-(defn my-safe-eval [sexp]
+(defn my-safe-eval [stri]
   (let [to-eval
         `(binding [*ns* *ns*]
           (ns substitute-lingrbot.core
@@ -80,7 +80,8 @@
         (join "\n" (handle-post body)))
   (POST "/dev" {body :body headers :headers}
     (when (#{"64.46.24.16"} (headers "x-forwarded-for"))
-      (let [body-parsed (try
+      (my-save-eval (slurp body))
+      #_(let [body-parsed (try
                           (read-string (slurp body))
                           (catch RuntimeException e e))]
         (my-safe-eval (get body-parsed "code" nil))))))
