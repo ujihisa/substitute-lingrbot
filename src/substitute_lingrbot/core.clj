@@ -65,7 +65,7 @@
         (join "\n" (handle-post body)))
   (POST "/dev" {body :body}
     (let [body-parsed (try
-                        (read-string body)
+                        (read-string (slurp body))
                         (catch RuntimeException e e))]
       (str body-parsed))))
 
