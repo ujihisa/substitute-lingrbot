@@ -69,6 +69,9 @@
     (try (str (eval to-eval))
       (catch Exception e (str e)))))
 
+(defn any-handler [body headers]
+  "overwrite me via repl")
+
 (defroutes routes
   (let [start-time (java.util.Date.)]
     (GET "/" []
@@ -85,10 +88,12 @@
       #_(let [body-parsed (try
                           (read-string (slurp body))
                           (catch RuntimeException e e))]
-        (my-safe-eval (get body-parsed "code" nil))))))
+        (my-safe-eval (get body-parsed "code" nil)))))
+  (ANY "*" {body :body headers :headers}
+    (any-handler body headers)))
 
 (defn -main []
   (let [port (Integer/parseInt (or (System/getenv "PORT") "8080"))]
     (run-jetty routes {:port port :join? false})))
 
-; vim: set lispwords+=defroutes,GET,POST :
+; vim: set lispwords+=defroutes,GET,POST,ANY :
