@@ -55,6 +55,9 @@
 
 (defn my-safe-eval [stri]
   (let [to-eval
+        `(do
+           (ns substitute-lingrbot.core)
+           (eval (read-string ~stri)))
         `(binding [*ns* *ns*]
           (ns substitute-lingrbot.core
             (:refer-clojure :exclude [replace])
