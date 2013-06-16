@@ -6,7 +6,7 @@
         [ring.adapter.jetty :only (run-jetty)]
         [clojure.string :only (replace join)])
   (:import java.util.concurrent.ExecutionException)
-  (:gen-class))
+  #_(:gen-class))
 
 (def version
   "dummy"
