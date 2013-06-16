@@ -62,10 +62,15 @@
                :author "ujihisa"
                :previous-text @previous-text})))
   (POST "/" {body :body}
-        (join "\n" (handle-post body))))
+        (join "\n" (handle-post body)))
+  (POST "/dev" {body :body}
+    (let [body-parsed (try
+                        (read-string body)
+                        (catch RuntimeException e e))]
+      body-parsed)))
 
 (defn -main []
   (let [port (Integer/parseInt (or (System/getenv "PORT") "8080"))]
     (run-jetty routes {:port port :join? false})))
 
-; vim: set lispwords+=defroutes :
+; vim: set lispwords+=defroutes,GET,POST :
