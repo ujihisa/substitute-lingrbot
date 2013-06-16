@@ -58,7 +58,7 @@
         `(do
            (ns substitute-lingrbot.core)
            (eval (read-string ~stri)))
-        `(binding [*ns* *ns*]
+        #_(binding [*ns* *ns*]
           (ns substitute-lingrbot.core
             (:refer-clojure :exclude [replace])
             (:use [compojure.core :only (defroutes GET POST)]
