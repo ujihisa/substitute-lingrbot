@@ -67,7 +67,7 @@
     (let [body-parsed (try
                         (read-string body)
                         (catch RuntimeException e e))]
-      body-parsed)))
+      (str body-parsed))))
 
 (defn -main []
   (let [port (Integer/parseInt (or (System/getenv "PORT") "8080"))]
