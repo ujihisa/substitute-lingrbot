@@ -1,12 +1,13 @@
 (ns substitute-lingrbot.core
   #_(:require [leiningen.core.project])
-  (:refer-clojure :exclude [replace])
+  #_(:refer-clojure :exclude [replace])
   (:use [compojure.core :only (defroutes GET POST)]
         [clojure.data.json :only (read-json)]
         [ring.adapter.jetty :only (run-jetty)]
-        [clojure.string :only (replace join)])
+        [clojure.string :only (join)])
+  (:require [clojure.string])
   (:import java.util.concurrent.ExecutionException)
-  #_(:gen-class))
+  (:gen-class))
 
 (def version
   "dummy"
@@ -36,16 +37,16 @@
                (re-find #"^s/((?:\\.|[^/])+)/((?:\\.|[^/])*)/g?\s*(<\s*@?(.*))?$" text)]
         (if target-nick
           (let [new-text
-                (replace (get @previous-text target-nick "")
-                                        (re-pattern (replace left #"\\(.)" "$1"))
-                                        (replace right #"\\(.)" "$1"))]
+                (clojure.string/replace (get @previous-text target-nick "")
+                                        (re-pattern (clojure.string/replace left #"\\(.)" "$1"))
+                                        (clojure.string/replace right #"\\(.)" "$1"))]
             (swap! previous-text assoc target-nick new-text)
             (format "%s" new-text))
           (let [latest-text (last @latest-texts) ; TODO
                 new-text
-                (replace latest-text
-                                        (re-pattern (replace left #"\\(.)" "$1"))
-                                        (replace right #"\\(.)" "$1"))]
+                (clojure.string/replace latest-text
+                                        (re-pattern (clojure.string/replace left #"\\(.)" "$1"))
+                                        (clojure.string/replace right #"\\(.)" "$1"))]
             (swap! latest-texts conj new-text)
             (format "%s" new-text)))
         (do
