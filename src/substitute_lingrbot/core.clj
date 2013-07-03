@@ -14,12 +14,13 @@
   #_(:version (leiningen.core.project/read)))
 
 (def previous-text (atom {}))
-(def latest-texts (atom [""]))
+(def latest-texts (atom {}))
 
 (defn handle-post [body]
   (for [message (map :message (:events (read-json (slurp body))))
         :let [text (:text message)
-              nick (:nickname message)]]
+              nick (:nickname message)
+              channel (:room message)]]
     (if (re-find #"^!help$" text)
       "* s/regexp/text/
        replaces the latest previous message.
@@ -42,16 +43,18 @@
                                         (s/replace right #"\\(.)" "$1"))]
             (swap! previous-text assoc target-nick new-text)
             (format "%s" new-text))
-          (let [latest-text (last @latest-texts) ; TODO
+          (let [latest-text (last (get @latest-texts channel [""])) ; TODO
                 new-text
                 (s/replace latest-text
                                         (re-pattern (s/replace left #"\\(.)" "$1"))
                                         (s/replace right #"\\(.)" "$1"))]
-            (swap! latest-texts conj new-text)
+            (let [texts (get @latest-texts channel [""])]
+              (swap! latest-texts assoc channel (conj texts new-text)))
             (format "%s" new-text)))
         (do
           (swap! previous-text assoc nick text)
-          (swap! latest-texts conj text)
+          (let [texts (get @latest-texts channel [""])]
+            (swap! latest-texts assoc channel (conj texts text)))
           "")))))
 
 (defn my-safe-eval [stri]
