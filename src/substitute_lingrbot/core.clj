@@ -20,7 +20,7 @@
   (for [message (map :message (:events (read-json (slurp body))))
         :let [text (:text message)
               nick (:nickname message)
-              channel (:room message)]]
+              room (:room message)]]
     (if (re-find #"^!help$" text)
       "* s/regexp/text/
        replaces the latest previous message.
@@ -43,18 +43,18 @@
                                         (s/replace right #"\\(.)" "$1"))]
             (swap! previous-text assoc target-nick new-text)
             (format "%s" new-text))
-          (let [latest-text (last (get @latest-texts channel [""])) ; TODO
+          (let [latest-text (last (get @latest-texts room [""])) ; TODO
                 new-text
                 (s/replace latest-text
                                         (re-pattern (s/replace left #"\\(.)" "$1"))
                                         (s/replace right #"\\(.)" "$1"))]
-            (let [texts (get @latest-texts channel [""])]
-              (swap! latest-texts assoc channel (conj texts new-text)))
+            (let [texts (get @latest-texts room [""])]
+              (swap! latest-texts assoc room (conj texts new-text)))
             (format "%s" new-text)))
         (do
           (swap! previous-text assoc nick text)
-          (let [texts (get @latest-texts channel [""])]
-            (swap! latest-texts assoc channel (conj texts text)))
+          (let [texts (get @latest-texts room [""])]
+            (swap! latest-texts assoc room (conj texts text)))
           "")))))
 
 (defn my-safe-eval [stri]
