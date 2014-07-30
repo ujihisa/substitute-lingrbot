@@ -82,7 +82,7 @@
                :homepage "https://github.com/ujihisa/substitute-lingrbot"
                :from start-time
                :author "ujihisa"
-               :previous-text @previous-text})))
+               #_:previous-text #_@previous-text})))
   (POST "/" {body :body}
         (join "\n" (handle-post body)))
   (POST "/dev" {body :body headers :headers}
