@@ -38,10 +38,11 @@
                (re-find #"^s/((?:\\.|[^/])+)/((?:\\.|[^/])*)/g?\s*(<\s*@?(.*))?$" text)]
         (if target-nick
           (let [new-text
-                (s/replace (get @previous-text target-nick "")
+                (s/replace (get (get @previous-text target-nick {}) room "")
                                         (re-pattern (s/replace left #"\\(.)" "$1"))
                                         (s/replace right #"\\(.)" "$1"))]
-            (swap! previous-text assoc target-nick new-text)
+            (swap! previous-text assoc target-nick
+                   (assoc (get @previous-text target-nick {}) room new-text))
             (format "%s" new-text))
           (let [latest-text (last (get @latest-texts room [""])) ; TODO
                 new-text
@@ -52,7 +53,8 @@
               (swap! latest-texts assoc room (conj texts new-text)))
             (format "%s" new-text)))
         (do
-          (swap! previous-text assoc nick text)
+          (swap! previous-text assoc nick
+                 (assoc (get @previous-text nick {}) room text))
           (let [texts (get @latest-texts room [""])]
             (swap! latest-texts assoc room (conj texts text)))
           "")))))
