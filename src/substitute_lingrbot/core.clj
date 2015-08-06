@@ -16,8 +16,8 @@
 (def previous-text (atom {}))
 (def latest-texts (atom {}))
 
-(defn handle-post [body]
-  (for [message (map :message (:events (read-json (slurp body))))
+(defn handle-post [body-str]
+  (for [message (map :message (:events (read-json body-str)))
         :let [text (:text message)
               nick (:nickname message)
               room (:room message)]]
@@ -86,7 +86,7 @@
                :author "ujihisa"
                #_:previous-text #_@previous-text})))
   (POST "/" {body :body}
-        (join "\n" (handle-post body)))
+    (join "\n" (handle-post (slurp body))))
   (POST "/dev" {body :body headers :headers}
     (when (#{"64.46.24.16"} (headers "x-forwarded-for"))
       (my-safe-eval (slurp body))
