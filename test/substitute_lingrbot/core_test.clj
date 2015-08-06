@@ -3,7 +3,7 @@
             [substitute-lingrbot.core :refer :all]))
 
 (defn- dummy-lingr-msg [text]
-  (format "{\"events\":[{\"message\":{\"text\":%s,\"nick\":\"aaa\",\"room\":\"bbb\"}}]}"
+  (format "{\"events\":[{\"message\":{\"text\":%s,\"nickname\":\"aaa\",\"room\":\"bbb\"}}]}"
           (prn-str text)))
 
 (deftest handle-post-test
@@ -11,4 +11,6 @@
     (handle-post (dummy-lingr-msg "hello"))
     (is (= [""] (handle-post (dummy-lingr-msg "world")))))
 
-  (testing ""))
+  (testing "substitute previous message"
+    (handle-post (dummy-lingr-msg "hello"))
+    (is (= ["he__o"] (handle-post (dummy-lingr-msg "s/l/_/"))))))
