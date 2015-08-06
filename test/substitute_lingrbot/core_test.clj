@@ -3,10 +3,10 @@
             [substitute-lingrbot.core :refer :all]))
 
 (defn- dummy-lingr-msg [text room nickname]
-  (format "{\"events\":[{\"message\":{\"text\":%s,\"nickname\":\"aaa\",\"room\":\"%s\"}}]}"
+  (format "{\"events\":[{\"message\":{\"text\":%s,\"nickname\":\"%s\",\"room\":\"%s\"}}]}"
           (prn-str text)
-          (str room)
-          (str nickname)))
+          (str nickname)
+          (str room)))
 
 (deftest handle-post-test
   (testing "ignore non-substitute messages"
