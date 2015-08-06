@@ -2,9 +2,13 @@
   (:require [clojure.test :refer :all]
             [substitute-lingrbot.core :refer :all]))
 
+(defn- dummy-lingr-msg [text]
+  (format "{\"events\":[{\"message\":{\"text\":%s,\"nick\":\"aaa\",\"room\":\"bbb\"}}]}"
+          (prn-str text)))
+
 (deftest handle-post-test
   (testing "ignore non-substitute messages"
-    (handle-post "{\"events\":[{\"message\":{\"text\":\"hello\",\"nick\":\"aaa\",\"room\":\"bbb\"}}]}")
-    (is (= [""] (handle-post "{\"events\":[{\"message\":{\"text\":\"hello\",\"nick\":\"aaa\",\"room\":\"bbb\"}}]}"))))
+    (handle-post (dummy-lingr-msg "hello"))
+    (is (= [""] (handle-post (dummy-lingr-msg "world")))))
 
   (testing ""))
