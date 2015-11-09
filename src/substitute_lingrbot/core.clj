@@ -54,11 +54,14 @@
   (for [message (map :message (:events (read-json body-str)))
         :let [text (:text message)
               nick (:nickname message)
-              room (:room message)]]
+              room (:room message)
+              matches
+              (delay (re-find
+                       #"^s/((?:\\.|[^/])+)/((?:\\.|[^/])*)/g?\s*(<\s*@?(.*))?$"
+                       text))]]
     (if (re-find #"^!help$" text)
       help-text
-      (if-let [[_ left right _ target-nick]
-               (re-find #"^s/((?:\\.|[^/])+)/((?:\\.|[^/])*)/g?\s*(<\s*@?(.*))?$" text)]
+      (if-let [[_ left right _ target-nick] @matches]
         (if target-nick
           (case1 room left right target-nick)
           (case2 room left right))
