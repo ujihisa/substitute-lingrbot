@@ -2,7 +2,7 @@
   (:require [clojure.test :refer :all]
             [substitute-lingrbot.core :refer :all]))
 
-(defn- dummy-lingr-msg [text room nickname]
+(defn- dummy-lingr-msg [text nickname room]
   (format "{\"events\":[{\"message\":{\"text\":%s,\"nickname\":\"%s\",\"room\":\"%s\"}}]}"
           (prn-str text)
           (str nickname)
