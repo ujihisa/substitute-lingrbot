@@ -1,17 +1,11 @@
 (ns substitute-lingrbot.core
-  #_(:require [leiningen.core.project])
   #_(:refer-clojure :exclude [replace])
-  (:use [compojure.core :only (defroutes GET POST ANY)]
-        [clojure.data.json :only (read-json)]
-        [ring.adapter.jetty :only (run-jetty)]
-        [clojure.string :only (join)])
-  (:require [clojure.string :as s])
-  (:import java.util.concurrent.ExecutionException)
+  (:require [clojure.string :as s]
+            [compojure.core :refer (defroutes GET POST ANY)]
+            [clojure.data.json :refer (read-json)]
+            [ring.adapter.jetty :refer (run-jetty)]
+            [clojure.string :refer (join)])
   (:gen-class))
-
-(def version
-  "dummy"
-  #_(:version (leiningen.core.project/read)))
 
 (def previous-text (atom {}))
 (def latest-texts (atom {}))
@@ -80,7 +74,7 @@
 (defroutes routes
   (let [start-time (java.util.Date.)]
     (GET "/" []
-         (str {:version version
+         (str {:version "dummy-version"
                :homepage "https://github.com/ujihisa/substitute-lingrbot"
                :from start-time
                :author "ujihisa"
