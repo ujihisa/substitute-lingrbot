@@ -10,6 +10,20 @@
 (def previous-text (atom {}))
 (def latest-texts (atom {}))
 
+(def help-text
+  "* s/regexp/text/
+   replaces the latest previous message.
+   * s/regexp/text/ < nickname
+   replaces the latest previous message by the nickname user.
+   * s/regexp/text/ < @id
+   replaces the latest previous message by the id user.
+   NOT IMPLMENENTED YET
+   * s/regexp/text/ < me
+   replaces the latest previous message by yourself.
+   NOT IMPLMENENTED YET
+   * (NOT IMPLEMENTED) it looks up older messages if regexp didn't match
+   * http://substitute-lingrbot.herokuapp.com/")
+
 (defn- case1 [room left right target-nick]
   (let [new-text
         (s/replace (get (get @previous-text target-nick {}) room "")
@@ -42,18 +56,7 @@
               nick (:nickname message)
               room (:room message)]]
     (if (re-find #"^!help$" text)
-      "* s/regexp/text/
-       replaces the latest previous message.
-       * s/regexp/text/ < nickname
-       replaces the latest previous message by the nickname user.
-       * s/regexp/text/ < @id
-       replaces the latest previous message by the id user.
-       NOT IMPLMENENTED YET
-       * s/regexp/text/ < me
-       replaces the latest previous message by yourself.
-       NOT IMPLMENENTED YET
-       * (NOT IMPLEMENTED) it looks up older messages if regexp didn't match
-       * http://substitute-lingrbot.herokuapp.com/"
+      help-text
       (if-let [[_ left right _ target-nick]
                (re-find #"^s/((?:\\.|[^/])+)/((?:\\.|[^/])*)/g?\s*(<\s*@?(.*))?$" text)]
         (if target-nick
