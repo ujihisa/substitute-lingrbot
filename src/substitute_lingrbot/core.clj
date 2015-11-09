@@ -10,6 +10,32 @@
 (def previous-text (atom {}))
 (def latest-texts (atom {}))
 
+(defn- case1 [room left right target-nick]
+  (let [new-text
+        (s/replace (get (get @previous-text target-nick {}) room "")
+                   (re-pattern (s/replace left #"\\(.)" "$1"))
+                   (s/replace right #"\\(.)" "$1"))]
+    (swap! previous-text assoc target-nick
+           (assoc (get @previous-text target-nick {}) room new-text))
+    (format "%s" new-text)))
+
+(defn- case2 [room left right]
+  (let [latest-text (last (get @latest-texts room [""])) ; TODO
+        new-text
+        (s/replace latest-text
+                   (re-pattern (s/replace left #"\\(.)" "$1"))
+                   (s/replace right #"\\(.)" "$1"))]
+    (let [texts (get @latest-texts room [""])]
+      (swap! latest-texts assoc room (conj texts new-text)))
+    (format "%s" new-text)))
+
+(defn- case3 [room text nick]
+  (swap! previous-text assoc nick
+         (assoc (get @previous-text nick {}) room text))
+  (let [texts (get @latest-texts room [""])]
+    (swap! latest-texts assoc room (conj texts text)))
+  "")
+
 (defn handle-post [body-str]
   (for [message (map :message (:events (read-json body-str)))
         :let [text (:text message)
@@ -31,27 +57,9 @@
       (if-let [[_ left right _ target-nick]
                (re-find #"^s/((?:\\.|[^/])+)/((?:\\.|[^/])*)/g?\s*(<\s*@?(.*))?$" text)]
         (if target-nick
-          (let [new-text
-                (s/replace (get (get @previous-text target-nick {}) room "")
-                                        (re-pattern (s/replace left #"\\(.)" "$1"))
-                                        (s/replace right #"\\(.)" "$1"))]
-            (swap! previous-text assoc target-nick
-                   (assoc (get @previous-text target-nick {}) room new-text))
-            (format "%s" new-text))
-          (let [latest-text (last (get @latest-texts room [""])) ; TODO
-                new-text
-                (s/replace latest-text
-                                        (re-pattern (s/replace left #"\\(.)" "$1"))
-                                        (s/replace right #"\\(.)" "$1"))]
-            (let [texts (get @latest-texts room [""])]
-              (swap! latest-texts assoc room (conj texts new-text)))
-            (format "%s" new-text)))
-        (do
-          (swap! previous-text assoc nick
-                 (assoc (get @previous-text nick {}) room text))
-          (let [texts (get @latest-texts room [""])]
-            (swap! latest-texts assoc room (conj texts text)))
-          "")))))
+          (case1 room left right target-nick)
+          (case2 room left right))
+        (case3 room text nick)))))
 
 (defn my-safe-eval [stri]
   (let [to-eval
