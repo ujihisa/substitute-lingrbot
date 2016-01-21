@@ -3,7 +3,7 @@
   :url "http://example.com/FIXME"
   :license {:name "GPL-3+"
             :url "http://www.gnu.org/licenses/gpl-3.0.en.html"}
-  :dependencies [[org.clojure/clojure "1.8.0-RC4"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/data.json "0.2.6"]
                  [compojure "1.4.0"]
                  [ring/ring-jetty-adapter "1.4.0"]]
